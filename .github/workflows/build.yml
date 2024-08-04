@@ -31,6 +31,36 @@ jobs:
           name: build
           path: |
             main
+  
+    ubuntu-cuda-latest:
+      runs-on: ubuntu-22.04
+
+      steps:
+        - name: Clone
+          uses: actions/checkout@v4
+
+        - name: Install CUDA
+          uses: Jimver/cuda-toolkit@v0.2.15
+          id: cuda-toolkit
+          with:
+              cuda: 12.4.1
+              method: 'network'
+
+        - name: Install Dependencies
+          run: |
+            sudo apt-get update
+            sudo apt install -y build-essential libsdl2-dev
+
+        - name: Build
+          run: |
+            GGML_CUDA=1 make -j main
+
+        - name: Upload Binaries
+          uses: actions/upload-artifact@v3
+          with:
+            name: build
+            path: |
+              main
   # windows:
   #   runs-on: windows-latest
 
